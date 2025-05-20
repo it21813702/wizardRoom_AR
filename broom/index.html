@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>WizardRoom AR</title>
+  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+</head>
+<body style="margin: 0; overflow: hidden;">
+  <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: true;" renderer="logarithmicDepthBuffer: true;">
+    <a-assets>
+      <audio id="chime" src="audio/magic.mp3" preload="auto"></audio>
+    </a-assets>
+
+    <a-light type="ambient" color="#fff"></a-light>
+
+    <a-marker id="broom-marker" type="pattern" url="broomMarker.patt">
+      <a-entity 
+        id="broom" 
+        gltf-model="sbroomstick.glb" 
+        scale="0.04 0.04 0.04" 
+        position="0 -1 0">
+      </a-entity>
+
+      <a-entity 
+        id="broom-audio" 
+        sound="src: #chime; autoplay: false; positional: false">
+      </a-entity>
+    </a-marker>
+
+    <a-entity camera></a-entity>
+  </a-scene>
+
+  <script>
+    const broom = document.querySelector('#broom');
+    const broomAudio = document.querySelector('#broom-audio');
+    const scene = document.querySelector('a-scene');
+    const marker = document.querySelector('#broom-marker');
+    let bounceCounter = 0;
+
+    // Resume audio context and play sound on click
+    window.addEventListener('click', async () => {
+      try {
+        const audioContext = scene.audioListener && scene.audioListener.context;
+        if (audioContext && audioContext.state === 'suspended') {
+          await audioContext.resume();
+          console.log('🔊 AudioContext resumed on click');
+        }
+
+        if (broomAudio.components.sound) {
+          broomAudio.components.sound.playSound();
+          console.log('🎵 Sound played on user click');
+        } else {
+          console.warn('⏳ Sound component not ready yet');
+        }
+
+        // Bounce animation
+        const animId = `animation__bounce${bounceCounter}`;
+        broom.removeAttribute(animId);
+        bounceCounter++;
+        broom.setAttribute(`animation__bounce${bounceCounter}`, {
+          property: 'position',
+          to: '0 -1 -0.7',
+          dir: 'alternate',
+          dur: 400,
+          loop: 2,
+          easing: 'easeOutBack'
+        });
+      } catch (err) {
+        console.error('⚠️ Audio play failed:', err);
+      }
+    });
+
+    // Wait until everything is loaded
+    scene.addEventListener('loaded', () => {
+      marker.addEventListener('markerFound', async () => {
+        console.log('📸 Marker found');
+
+        try {
+          const audioContext = scene.audioListener && scene.audioListener.context;
+          if (audioContext && audioContext.state === 'suspended') {
+            await audioContext.resume();
+            console.log('🔊 AudioContext resumed in markerFound');
+          }
+
+          // Wait for sound component to be ready
+          if (broomAudio.components.sound) {
+            broomAudio.components.sound.playSound();
+            console.log('🎵 Sound auto-played on markerFound');
+          } else {
+            // Try again shortly if sound isn't initialized yet
+            setTimeout(() => {
+              if (broomAudio.components.sound && !broomAudio.components.sound.isPlaying) {
+                broomAudio.components.sound.playSound();
+                console.log('🎵 Sound retried after delay');
+              }
+            }, 500);
+          }
+        } catch (err) {
+          console.error('⚠️ Marker sound play error:', err);
+        }
+      });
+
+      marker.addEventListener('markerLost', () => {
+        console.log('❌ Marker lost');
+      });
+    });
+  </script>
+</body>
+</html>
