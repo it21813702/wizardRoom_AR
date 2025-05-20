@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>AR.js Marker Test</title>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.min.js"></script>
+    <style>
+      body { margin: 0; overflow: hidden; }
+    </style>
+  </head>
+  <body>
+    <a-scene embedded arjs>
+      
+      <!-- This must match your correct pattern file name -->
+      <a-marker type="pattern" url="markers/pattern-letter.patt" emitevents="true" id="marker">
+        <a-box position="0 0.5 0" material="color: blue;"></a-box>
+      </a-marker>
+
+      <a-marker-camera type="pattern" url="markers/pattern-letter.patt" emitevents="true" id="marker">
+        <a-box position="0 0.5 0" material="color: blue;"></a-box>
+      </a-marker>
+
+      <a-entity camera></a-entity>
+    </a-scene>
+
+    <script>
+      // Wait for DOM content
+      window.onload = () => {
+        const marker = document.querySelector("#marker");
+        if (marker) {
+          marker.addEventListener("markerFound", () => {
+            console.log("✅ Marker found!");
+          });
+          marker.addEventListener("markerLost", () => {
+            console.log("❌ Marker lost.");
+          });
+        } else {
+          console.error("⛔ Marker element not found in DOM.");
+        }
+      };
+    </script>
+  </body>
+</html>
