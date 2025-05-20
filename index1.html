@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Wizard Room AR Scene</title>
+    <!-- A-Frame and AR.js Libraries -->
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+      .arjs-loader {
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 9999;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .arjs-loader div {
+        text-align: center;
+        font-size: 1.25em;
+        color: white;
+      }
+    </style>
+  </head>
+
+
+
+  <body style="margin: 0; overflow: hidden;">
+    <!-- Loading indicator -->
+    <div class="arjs-loader">
+      <div>Loading, please wait...</div>
+    </div>
+    
+    <a-scene
+      embedded
+      arjs="sourceType: webcam; debugUIEnabled: true; detectionMode: mono_and_matrix; matrixCodeType: 3x3;">
+      
+      <!-- Marker 1: Cauldron -->
+      <a-marker type="pattern" url="markers/pattern-cauldron.patt">
+        <a-entity 
+          gltf-model="./models/cauldron.glb" 
+          scale="0.5 0.5 0.5" 
+          position="0 0 0"
+          rotation="-90 0 0"
+          animation="property: rotation; to: -90 360 0; loop: true; dur: 10000; easing: linear;">
+        </a-entity>
+      </a-marker>
+      
+      <!-- Marker 2: Broom -->
+      <a-marker type="pattern" url="markers/pattern-broom.patt">
+        <a-entity 
+          gltf-model="./models/broomstick.glb" 
+          scale="0.5 0.5 0.5" 
+          position="0 0 0"
+          rotation="-90 0 0">
+        </a-entity>
+      </a-marker>
+      
+      <!-- Marker 3: Potion -->
+      <a-marker type="pattern" url="markers/pattern-potion.patt">
+        <a-entity 
+          gltf-model="./models/redPotion.glb" 
+          scale="0.5 0.5 0.5" 
+          position="0 0 0"
+          rotation="-90 0 0">
+        </a-entity>
+      </a-marker>
+      
+      <!-- Marker 4: Crystal -->
+      <a-marker type="pattern" url="./markers/pattern-crystal.patt" 
+          smooth="true"
+          smoothCount="10"
+          smoothTolerance="0.01"
+          smoothThreshold="5"
+        >
+        <a-entity 
+          gltf-model="./models2/crystals.glb" 
+          scale="0.5 0.5 0.5" 
+          position="0 0 0"
+          rotation="-90 0 0">
+        </a-entity>
+      </a-marker>
+      
+      <!-- AR Camera with proper configuration -->
+      <a-entity camera></a-entity>
+    </a-scene>
+  </body>
+</html>
