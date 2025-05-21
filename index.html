@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>Crystal on Marker</title>
 
-    <!-- load the A-Frame and AR.js -->
+    <!-- Load A-Frame and AR.js -->
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.min.js"></script>
   </head>
@@ -17,21 +17,21 @@
       renderer="logarithmicDepthBuffer: true;"
     >
 
-      <!-- lighting -->
+      <!-- Lighting -->
       <a-entity light="type: ambient; intensity: 0.8"></a-entity>
       <a-entity light="type: directional; intensity: 1" position="1 2 2"></a-entity>
 
-      <!-- assets -->
+      <!-- Assets -->
       <a-assets>
         <a-asset-item
           id="crystalsModel"
-          src="models2/crystals.glb"
+          src="models2/crystals-three.glb"
           onerror="console.error('❌ crystals.glb failed to load')"
         ></a-asset-item>
+        <audio id="cBgSound" src="sounds/crystal-bg.mp3"></audio>
       </a-assets>
 
-
-      <!-- marker1: crystal model -->
+      <!-- Marker -->
       <a-marker
         type="pattern"
         url="markers/pattern-cryst.patt"
@@ -46,20 +46,24 @@
         ></a-entity>
       </a-marker>
 
+      <!-- Background sound (outside marker) -->
+      <a-entity 
+        id="bgPlayer" 
+        sound="src: #cBgSound; loop: true; volume: 0.5"
+      ></a-entity>
+
       <!-- Camera -->
       <a-entity camera></a-entity>
     </a-scene>
 
-
-
-
-    <!-- for console logs -->
+    <!-- JS: Console Logs + Sound Trigger -->
     <script>
       console.log("📦 Scene Loaded");
-
+    
       const scene = document.querySelector("a-scene");
       const marker = document.querySelector("#marker");
-
+      const bgSound = document.querySelector("#bgPlayer");
+    
       if (scene.hasLoaded) {
         console.log("✅ A-Frame Scene Ready");
       } else {
@@ -67,16 +71,21 @@
           console.log("✅ A-Frame Scene Loaded (event)");
         });
       }
-
+    
       marker.addEventListener("markerFound", () => {
         console.log("🎯 Marker FOUND");
+    
+        // Play the background sound when marker appears
+        bgSound.components.sound.playSound();
       });
-
+    
       marker.addEventListener("markerLost", () => {
         console.log("📭 Marker LOST");
+    
+        // Stop the background sound when marker disappears
+        bgSound.components.sound.stopSound();
       });
     </script>
-
+    
   </body>
-  
 </html>
