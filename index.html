@@ -16,21 +16,32 @@
       vr-mode-ui="enabled: false"
       renderer="logarithmicDepthBuffer: true;"
     >
-
+  
       <!-- Lighting -->
       <a-entity light="type: ambient; intensity: 0.8"></a-entity>
       <a-entity light="type: directional; intensity: 1" position="1 2 2"></a-entity>
-
+  
+      <!-- Camera with raycaster for clicks -->
+      <a-entity
+        id="camera"
+        camera
+        position="0 0 0"
+        raycaster="objects: .clickable"
+        cursor="fuse: false; rayOrigin: mouse"
+      ></a-entity>
+  
       <!-- Assets -->
       <a-assets>
         <a-asset-item
           id="crystalsModel"
           src="models2/crystals-three.glb"
-          onerror="console.error('❌ crystals.glb failed to load')"
+          onerror="console.error('❌ crystals.glb didn’t load')"
         ></a-asset-item>
+  
         <audio id="cBgSound" src="sounds/crystal-bg.mp3"></audio>
+        <audio id="crystalTap" src="sounds/crystal-tap.mp3"></audio>
       </a-assets>
-
+  
       <!-- Marker -->
       <a-marker
         type="pattern"
@@ -38,32 +49,47 @@
         emitevents="true"
         id="marker"
       >
+        <!-- Crystal model -->
         <a-entity
           gltf-model="#crystalsModel"
           position="0 0 0"
           scale="5 5 5"
           animation="property: rotation; to: 0 360 0; loop: true; dur: 10000"
         ></a-entity>
+  
+        <!-- Invisible hitbox for tapping -->
+        <a-entity
+          id="tapTarget"
+          geometry="primitive: box; height: 2; width: 2; depth: 2"
+          position="0 1 0"
+          material="opacity: 0; transparent: true"
+          class="clickable"
+        ></a-entity>
       </a-marker>
-
-      <!-- Background sound (outside marker) -->
-      <a-entity 
-        id="bgPlayer" 
+  
+      <!-- Background music -->
+      <a-entity
+        id="bgPlayer"
         sound="src: #cBgSound; loop: true; volume: 0.5"
       ></a-entity>
-
-      <!-- Camera -->
-      <a-entity camera></a-entity>
+  
+      <!-- Tap sound -->
+      <a-entity
+        id="tapSoundPlayer"
+        sound="src: #crystalTap; autoplay: false; volume: 1"
+      ></a-entity>
     </a-scene>
-
-    <!-- JS: Console Logs + Sound Trigger -->
+  
+    <!-- JS -->
     <script>
       console.log("📦 Scene Loaded");
-    
+  
       const scene = document.querySelector("a-scene");
       const marker = document.querySelector("#marker");
       const bgSound = document.querySelector("#bgPlayer");
-    
+      const tapTarget = document.querySelector("#tapTarget");
+      const tapSoundPlayer = document.querySelector("#tapSoundPlayer");
+  
       if (scene.hasLoaded) {
         console.log("✅ A-Frame Scene Ready");
       } else {
@@ -71,21 +97,22 @@
           console.log("✅ A-Frame Scene Loaded (event)");
         });
       }
-    
+  
       marker.addEventListener("markerFound", () => {
         console.log("🎯 Marker FOUND");
-    
-        // Play the background sound when marker appears
         bgSound.components.sound.playSound();
       });
-    
+  
       marker.addEventListener("markerLost", () => {
         console.log("📭 Marker LOST");
-    
-        // Stop the background sound when marker disappears
         bgSound.components.sound.stopSound();
       });
+  
+      tapTarget.addEventListener("click", () => {
+        console.log("🪄 Crystal tapped!");
+        tapSoundPlayer.components.sound.playSound();
+      });
     </script>
-    
   </body>
+  
 </html>
