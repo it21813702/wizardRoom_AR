@@ -2,43 +2,81 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Crystal Model - A-Frame Scene TEST</title>
+    <title>Crystal on Marker</title>
 
+    <!-- load the A-Frame and AR.js -->
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-
-    <!-- Optional: Orbit Controls (for rotating the camera view) -->
-    <script src="https://cdn.jsdelivr.net/npm/aframe-orbit-controls@1.0.0/dist/aframe-orbit-controls.min.js"></script>
-    
     <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.min.js"></script>
-
   </head>
 
-  
-  <body>
-    <a-scene background="color: #000000">
+  <body style="margin: 0; overflow: hidden;">
+    <a-scene
+      embedded
+      arjs="sourceType: webcam;"
+      vr-mode-ui="enabled: false"
+      renderer="logarithmicDepthBuffer: true;"
+    >
 
-      <!-- Lighting setup -->
-      <a-entity light="type: ambient; color: #ffffff; intensity: 0.5"></a-entity>
-      <a-entity light="type: directional; color: #ffffff; intensity: 1" position="1 3 2"></a-entity>
+      <!-- lighting -->
+      <a-entity light="type: ambient; intensity: 0.8"></a-entity>
+      <a-entity light="type: directional; intensity: 1" position="1 2 2"></a-entity>
 
-      <!-- GLB Model (loaded using gltf-model component) -->
-      <a-entity 
-        gltf-model="models2/crystals.glb" 
-        position="0 0 -3" 
-        scale="5 5 5"
-        animation="property: rotation; to: 0 360 0; loop: true; dur: 30000"
+      <!-- assets -->
+      <a-assets>
+        <a-asset-item
+          id="crystalsModel"
+          src="models2/crystals.glb"
+          onerror="console.error('❌ crystals.glb failed to load')"
+        ></a-asset-item>
+      </a-assets>
+
+
+      <!-- marker1: crystal model -->
+      <a-marker
+        type="pattern"
+        url="markers/pattern-cryst.patt"
+        emitevents="true"
+        id="marker"
       >
-      </a-entity>
+        <a-entity
+          gltf-model="#crystalsModel"
+          position="0 0 0"
+          scale="5 5 5"
+          animation="property: rotation; to: 0 360 0; loop: true; dur: 10000"
+        ></a-entity>
+      </a-marker>
 
-      <!-- Camera with orbit controls -->
-      <a-entity 
-        id="camera" 
-        camera 
-        look-controls 
-        orbit-controls="autoRotate: false"
-        position="0 1.6 0"
-      ></a-entity>
-
+      <!-- Camera -->
+      <a-entity camera></a-entity>
     </a-scene>
+
+
+
+
+    <!-- for console logs -->
+    <script>
+      console.log("📦 Scene Loaded");
+
+      const scene = document.querySelector("a-scene");
+      const marker = document.querySelector("#marker");
+
+      if (scene.hasLoaded) {
+        console.log("✅ A-Frame Scene Ready");
+      } else {
+        scene.addEventListener("loaded", () => {
+          console.log("✅ A-Frame Scene Loaded (event)");
+        });
+      }
+
+      marker.addEventListener("markerFound", () => {
+        console.log("🎯 Marker FOUND");
+      });
+
+      marker.addEventListener("markerLost", () => {
+        console.log("📭 Marker LOST");
+      });
+    </script>
+
   </body>
+  
 </html>
