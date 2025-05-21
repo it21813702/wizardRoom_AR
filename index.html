@@ -1,48 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>WizardRoom AR Demo</title>
-  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js"></script>
-</head>
-<body>
-  <a-scene
-    embedded
-    arjs="sourceType: webcam; debugUIEnabled: false;"
-  >
-    <!-- Use the Hiro marker by default -->
-    <a-marker preset="hiro">
-      <!-- Replace this box with your 3D model later -->
-      <a-box position="0 0.5 0" material="color: blue;"></a-box>
-    </a-marker>
-    <a-marker
-      type="pattern"
-      url="markers/pattern-broom.patt">
-      <!-- your 3D model here -->
-      <a-box position="0 0.5 0" material="color: blue;"></a-box>
-    </a-marker>
-    <a-marker
-      type="pattern"
-      url="markers/pattern-crystal.patt">
-      <!-- your 3D model here -->
-      <a-box position="0 0.5 0" material="color: blue;"></a-box>
-    </a-marker>
-    <a-marker
-      type="pattern"
-      url="markers/pattern-cauldron.patt">
-      <!-- your 3D model here -->
-      <a-box position="0 0.5 0" material="color: blue;"></a-box>
-    </a-marker>
-    <a-marker
-      type="pattern"
-      url="markers/pattern-potion.patt">
-      <!-- your 3D model here -->
-      <a-box position="0 0.5 0" material="color: blue;"></a-box>
-    </a-marker>
-    <a-entity camera></a-entity>
-  </a-scene>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>WizardRoom AR Demo</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+    <link rel="stylesheet" href="style.css" />
+    <script src="script.js"></script>
+  </head>
+  <body>
+    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+      <!-- Audio assets -->
+      <a-assets>
+        <audio
+          id="hiro-sound"
+          src="sounds/hiro-sound.mp3"
+          preload="auto"
+        ></audio>
+        <audio
+          id="broom-sound"
+          src="sounds/broom-sound.mp3"
+          preload="auto"
+        ></audio>
+        <audio id="fish-sound" src="sounds/fish.mp3" preload="auto"></audio>
+        <audio
+          id="cauldron-sound"
+          src="sounds/cauldron-sound.mp3"
+          preload="auto"
+        ></audio>
+        <audio
+          id="potion-sound"
+          src="sounds/potion-sound.mp3"
+          preload="auto"
+        ></audio>
+      </a-assets>
+
+      <!-- Use the Hiro marker by default -->
+      <a-marker preset="hiro" sound-component="src: #hiro-sound">
+        <!-- Replace this box with your 3D model later -->
+        <a-box position="0 0.5 0" material="color: blue;"></a-box>
+      </a-marker>
+      <a-marker
+        type="pattern"
+        url="markers/pattern-broom.patt"
+        sound-component="src: #broom-sound"
+      >
+        <!-- your 3D model here -->
+        <a-box position="0 0.5 0" material="color: blue;"></a-box>
+      </a-marker>
+      <a-marker
+        id="fish-marker"
+        type="pattern"
+        url="markers/pattern-fish.patt"
+        emitevents="true"
+        sound-component="src: #fish-sound"
+      >
+        <!-- your 3D model here -->
+        <a-entity
+          gltf-model="url(models/fish.glb)"
+          scale="0.4 1 0.4"
+          position="0 0 0"
+          animation-mixer="clip: *; loop: repeat; crossFadeDuration: 0.4"
+        >
+        </a-entity>
+      </a-marker>
+      <a-marker
+        type="pattern"
+        url="markers/pattern-cauldron.patt"
+        sound-component="src: #cauldron-sound"
+      >
+        <!-- your 3D model here -->
+        <!-- <a-box position="0 0.5 0" material="color: blue;"></a-box> -->
+        <a-entity gltf-model="url(models/Castle test2.glb)" amera></a-entity>
+        scale="0.4 0.4 0.4" position="0 0 0" animation-mixer="clip: * repeat;
+        crossFadeDuration: 0.4" >
+      </a-marker>
+      <a-marker
+        type="pattern"
+        url="markers/pattern-potion.patt"
+        sound-component="src: #potion-sound"
+      >
+        <!-- your 3D model here -->
+        <a-box position="0 0.5 0" material="color: blue;"></a-box>
+      </a-marker>
+      <a-entity camera></a-entity>
+    </a-scene>
+  </body>
 </html>
